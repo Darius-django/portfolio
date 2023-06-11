@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'PORTFOLIO',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -118,9 +119,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#new
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+#email send block
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Čia įrašykite savo SMTP serverio adresą
+EMAIL_PORT = 587  # Čia įrašykite tinkamą SMTP serverio portą
+EMAIL_USE_TLS = True  # Ar naudoti TLS šifravimą
+EMAIL_HOST_USER = 'chemija.chemija560@gmail.com'  # Čia įrašykite savo el. pašto adresą
+EMAIL_HOST_PASSWORD = 'daka321745'  # Čia įrašykite savo el. pašto slaptažodį
+#video downloader block
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

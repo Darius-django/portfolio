@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Length Converter</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<style>
+        .center-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<div class="container center-form">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1>Length Converter</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <label for="value">Value:</label>
+                    <input type="number" step="any" name="value" id="value" required><br><br>
+
+                    <label for="from_unit">From Unit:</label>
+                    <select name="from_unit" id="from_unit" required>
+                        <option value="mm">mm</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="km">km</option>
+                        <option value="in">in</option>
+                        <option value="ft">ft</option>
+                        <option value="yd">yd</option>
+                        <option value="mi">mi</option>
+                    </select><br><br>
+
+                    <label for="to_unit">To Unit:</label>
+                    <select name="to_unit" id="to_unit" required>
+                        <option value="mm">mm</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="km">km</option>
+                        <option value="in">in</option>
+                        <option value="ft">ft</option>
+                        <option value="yd">yd</option>
+                        <option value="mi">mi</option>
+                    </select><br><br>
+
+                    <input type="submit" value="Convert">
+                </form>
+                <div id="result"></div>
+            </div>
+        </div>
+</div>
+    <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            var value = parseFloat(document.getElementById("value").value);
+            var from_unit = document.getElementById("from_unit").value;
+            var to_unit = document.getElementById("to_unit").value;
+
+            var formData = new FormData();
+            formData.append("value", value);
+            formData.append("from_unit", from_unit);
+            formData.append("to_unit", to_unit);
+
+            fetch("/convert", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                document.getElementById("result").innerHTML = result;
+            });
+        });
+    </script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>

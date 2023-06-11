@@ -204,12 +204,12 @@
             <div class="row">
                 <div class="col-lg-4 mt-4">
                     <div class="card">
-                        <img class="card-img-top" src="{% static 'images/portfolioImage3.jpg'%}" alt="Card image" style="width:100%">
+                        <img class="card-img-top" src="{% static 'images/UnitConverter1.jpg'%}" alt="Card image" style="width:100%">
                         <div class="card-body">
-                            <h4 class="card-title">YouTube Clone</h4>
+                            <h4 class="card-title">Unit Converter </h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="{% url 'convert' %}" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -217,12 +217,12 @@
 
                 <div class="col-lg-4 mt-4">
                     <div class="card portfolioContent">
-                        <img class="card-img-top" src="{% static 'images/portfolioImage2.jpg' %}" alt="Card image" style="width:100%">
+                        <img class="card-img-top" src="{% static 'images/portfolioImage21.jpg' %}" alt="Card image" style="width:100%">
                         <div class="card-body">
                             <h4 class="card-title">Quiz App</h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="{% url 'quiz' %}" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -230,12 +230,12 @@
 
                 <div class="col-lg-4 mt-4">
                     <div class="card portfolioContent">
-                        <img class="card-img-top" src="{% static 'images/portfolioImage1.jpg' %}" alt="Card image" style="width:100%">
+                        <img class="card-img-top" src="{% static 'images/portfolioImage4.jpg' %}" alt="Card image" style="width:100%">
                         <div class="card-body">
-                            <h4 class="card-title">Product Landing Page</h4>
+                            <h4 class="card-title">URL Shortener</h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="{% url 'short' %}" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -245,12 +245,12 @@
             <div class="row">
                 <div class="col-lg-4 mt-4">
                     <div class="card portfolioContent">
-                        <img class="card-img-top" src="{% static 'images/portfolioImage2.jpg'%}" alt="Card image" style="width:100%">
+                        <img class="card-img-top" src="{% static 'images/portfolioImage22.jpg'%}" alt="Card image" style="width:100%">
                         <div class="card-body">
-                            <h4 class="card-title">Messaging Service</h4>
+                            <h4 class="card-title">YouTube Video Downloader</h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="{% url 'video' %}" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -260,10 +260,10 @@
                     <div class="card portfolioContent">
                         <img class="card-img-top" src="{% static 'images/portfolioImage3.jpg'%}" alt="Card image" style="width:100%">
                         <div class="card-body">
-                            <h4 class="card-title">Twitter Clone</h4>
+                            <h4 class="card-title">Web Scraping</h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="{% url 'my_view' %}" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -271,12 +271,12 @@
 
                 <div class="col-lg-4 mt-4">
                     <div class="card portfolioContent">
-                        <img class="card-img-top" src="{% static 'images/portfolioImage4.jpg'%}" alt="Card image" style="width:100%">
+                        <img class="card-img-top" src="{% static 'images/portfolioImage44.jpg'%}" alt="Card image" style="width:100%">
                         <div class="card-body">
                             <h4 class="card-title">Blog App</h4>
                             <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-success">Link</a>
+                                <a href="blog" class="btn btn-success">Link</a>
                             </div>
                         </div>
                     </div>
@@ -290,31 +290,33 @@
         <div class="container mt-3 contactContent">
             <h1 class="text-center">Contact Me</h1>
 
-            <div class="row mt-4">
-                <div class="col-lg-6">
-                    <!-- to edit google map goto https://www.embed-map.com type your location, generate html code and copy the html  -->
-                    <div style="max-width:100%;overflow:hidden;color:red;width:500px;height:500px;">
-                        <div id="embedmap-canvas" style="height:100%; width:100%;max-width:100%;">
-                            <iframe style="height:100%;width:100%;border:0;" frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=Vilnius,+Vilniaus+m.+sav.,+Lietuva&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8">
-                            </iframe>
+                <div class="row mt-4">
+                    <div class="col-lg-6">
+                        <!-- to edit google map goto https://www.embed-map.com type your location, generate html code and copy the html-->
+                        <div style="max-width:100%;overflow:hidden;color:red;width:500px;height:500px;">
+                            <div id="embedmap-canvas" style="height:100%; width:100%;max-width:100%;">
+                                <iframe style="height:100%;width:100%;border:0;" frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=Gedimino+Avenue,+Vilnius,+Lithuania&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8">
+                                </iframe>
+                            </div>
+                            <a class="googlemaps-html" href="https://www.embed-map.com" id="get-data-forembedmap">https://www.embed-map.com</a>
+                            <style>#embedmap-canvas img{max-width:none!important;background:none!important;font-size: inherit;font-weight:inherit;}
+                            </style>
                         </div>
-                        <a class="googlemaps-html" href="https://www.embed-map.com" id="get-data-forembedmap">https://www.embed-map.com</a>
-                        <style>#embedmap-canvas img{max-width:none!important;background:none!important;font-size: inherit;font-weight:inherit;}
-                        </style>
-                    </div>
-                </div>
-
+                        </div>
                 <div class="col-lg-6">
                     <!-- form fields -->
-                    <form>
-                        <input type="text" class="form-control form-control-lg" placeholder="Name">
-                        <input type="email" class="form-control mt-3" placeholder="Email">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="name" class="form-control form-control-lg" placeholder="Name" required>
+                        <input type="email" name="email" class="form-control mt-3" placeholder="Email" required>
                         <div class="mb-3 mt-3">
-                            <textarea class="form-control" rows="5" id="comment" name="text" placeholder="Project Details"></textarea>
+                            <textarea class="form-control" rows="5" id="comment" name="projectDetails" placeholder="ProjectDetails" required></textarea>
                         </div>
-                    </form>
                     <button type="submit" value="Submit" class="btn btn-success mt-3">Contact Me</button>
-                    
+                        {% if request.method == 'POST' and not name and not email and not projectDetails %}
+                            <p class="text-danger">Užpildykite visus laukus!</p>
+                        {% endif %}
+                    </form>
                 </div>
 
             </div>
@@ -338,7 +340,6 @@
 
     <!-- load javascript after loading all html content -->
     <script src="{% static 'script/script.js'%}"></script>
-
 </body>
 
 </html>

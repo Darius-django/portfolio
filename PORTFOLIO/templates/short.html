@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>url shortener</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.form-control{
+width:100%;
+padding:0.375rem 0.75 rem;
+margin: 0 auto;
+}
+.video-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.small-video {
+    max-width: 100%;
+}
+</style>
+</head>
+<body>
+<div class="m-4 text-center">
+    <h2>URL Shortener</h2>
+    <form action="" method="post" class="d-flex align-items-center justify-content-center">
+        {% csrf_token %}
+        <div class="mb-3 me-2">
+            <label class="form-label" for="url">URL</label>
+            <input type="text" class="form-control border-success" id="url" name="url" placeholder="Enter URL" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Shorten URL</button>
+    </form>
+
+    {% if shortened_url %}
+        <p>Shortened URL: <a href="{{ shortened_url }}" target="_blank">{{ shortened_url }}</a></p>
+    {% endif %}
+
+    {% if original_url %}
+        <p>Original URL: <a href="{{ original_url }}" target="_blank">{{ original_url }}</a></p>
+    {% endif %}
+</div>
+
+<div class="m-4 text-center">
+    <h2>URL Shortener</h2>
+    <form action="{% url 'shorten_multiple' %}" method="post" class="d-flex align-items-center justify-content-center" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3 me-2">
+            <label class="form-label" for="file_input">Įkelti failą:</label>
+            <input type="file" class="form-control" id="file_input" name="file_input" accept=".txt" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Įkelti failą</button>
+    </form>
+    {% if shortened_urls %}
+    <h4>Sutrumpinti URL:</h4>
+    <ol>
+        {% for shortened_url in shortened_urls %}
+            <li><a href="{{ shortened_url }}" target="_blank">{{ shortened_url }}</a></li>
+        {% endfor %}
+    </ol>
+{% endif %}
+    {% if url_inputs %}
+    <h4>Įkelta URL iš failo:</h4>
+    <ol>
+        {% for url_input in url_inputs %}
+            <li>{{ url_input }}</li>
+        {% endfor %}
+    </ol>
+{% endif %}
+</div>
+</body>
+</html>
+
