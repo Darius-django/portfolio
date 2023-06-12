@@ -27,5 +27,5 @@ urlpatterns = [
     #converter
     path('blog/convert/', views.convert_length, name='convert_length'),
     path('converter', views.convert, name='converter'),
-    #path('convert', views.convert, name='convert'),
+    path('convert', views.convert, name='convert'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

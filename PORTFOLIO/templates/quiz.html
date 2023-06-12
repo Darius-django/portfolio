@@ -57,7 +57,7 @@
             <p>Score: {{ percent }}</p>
         {% endif %}
     </div>
-</div> ------>
+</div> -->
 
 <!-- QUIZ ONE -->
   <section class="section-1" id="section-1">
@@ -67,8 +67,9 @@
               <p>QUESTION 1 OF 5</p>
               <p>What does CSS stand for?</p>
               {% if question %}
+              {% csrf_token %}
               <p>{{ question.question_text }}</p>
-              <!-- Čia galite pridėti klausimo atsakymo parinktis, jei reikia -->
+              <!-- Čia  pridėsiu atsakymus  -->
               {% else %}
               <p>No questions available.</p>
               {% endif %}
@@ -231,7 +232,7 @@
           <h2>Refresh/Reload this page to continue</h2>
       </div>
   </section>
-
+<!-------nespausdina i template----->
 <form method="POST" action="">
   {% csrf_token %}
   {% for question in questions %}
@@ -245,5 +246,6 @@
   {% endfor %}
   <button type="submit">Submit</button>
 </form>
+
 </body>
 </html>

@@ -142,7 +142,7 @@ def send_email(name, email, project_details):
         server.login(sender_email, password)
         server.send_message(message)
 
-# Ši funkcija gali būti iškviesta iš Django views.py failo
+# Ši funkcija bus iškviesta iš Django views.py failo
 def send(request):
     if request.method == "POST":
         name = request.POST.get("name")
