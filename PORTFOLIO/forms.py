@@ -35,3 +35,4 @@ class ScrapDataForm(forms.ModelForm):
     class Meta:
         model = ScrapData
         fields = ['title', 'url']
+

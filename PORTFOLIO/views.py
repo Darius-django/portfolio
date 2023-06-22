@@ -1,23 +1,25 @@
-from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
-from .forms import ContactForm,CommentForm,ScrapDataForm
-from .models import Post,Comment,Question
+from .forms import ContactForm,ScrapDataForm
+from .models import Post,Comment
 from django.db.models import Q
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 #------------srap imports--------------
 import pandas as pd
-import urllib.request
-from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from .models import ScrapData
-import re
 #-----video downloader imports--------
 from pytube import YouTube
 from django.conf import settings
+#---converter block here-----------
+import json
 import os
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-from django.views.generic import ListView
+import re
+#
+from .models import ScrapData
+#
+import pyshorteners
+from .models import URL
 
 
 def index(request):
@@ -38,7 +40,7 @@ def success(request):
 def blog(request):
    return render(request, 'blog.html')
 
-#######BLOG SIDE HERE#################
+#---------BLOG SIDE HERE-------------
 class PostList(generic.ListView):
     model = Post
     template_name = 'blog.html'
@@ -76,12 +78,12 @@ def search(request):
     search_results = Post.objects.filter(Q(body__icontains=query) | Q(author__icontains=query))
     return render(request, 'blog.html', {'posts': search_results, 'query': query})
 #-------scrap BLOCK HERE-------------------------------------------------------------------------
-from .models import ScrapData
+import requests
 
 def my_view(request):
     url = "https://www.lrytas.lt/"
-    response = urllib.request.urlopen(url)
-    html_content = response.read()
+    response = requests.get(url)
+    html_content = response.content
 
     soup = BeautifulSoup(html_content, 'html.parser')
 
@@ -116,43 +118,6 @@ def my_view(request):
         form = ScrapDataForm()
 
     return render(request, 'scrap.html', {'df': df, 'form': form})
-#-------------send email-----------------------------
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-
-def send_email(name, email, project_details):
-    # Konfigūruoti el. pašto nustatymus
-    sender_email = "jusu@el-pasto.adresas"
-    receiver_email = "gavejo@el-pasto.adresas"
-    password = "jusu-slaptazodis"
-
-    # Sukurti el. pašto turinį
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = receiver_email
-    message["Subject"] = "Kontaktų forma"
-
-    body = f"Vardas: {name}\nEl. paštas: {email}\nProjekto detalės: {project_details}"
-    message.attach(MIMEText(body, "plain"))
-
-    # Prisijungti prie el. pašto serverio ir išsiųsti pranešimą
-    with smtplib.SMTP_SSL("smtp.gmail.com", 485) as server:
-        server.login(sender_email, password)
-        server.send_message(message)
-
-# Ši funkcija bus iškviesta iš Django views.py failo
-def send(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        project_details = request.POST.get("projectDetails")
-
-        # Išsiųsti el. laišką
-        send_email(name, email, project_details)
-
-    return render(request, "contact.html")
 
 #-------video downloader block--------------------
 def display_available_formats(streams):
@@ -211,10 +176,7 @@ def video(request):
 
     return render(request, 'video.html')
 #https://www.youtube.com/watch?v=DnGdoEa1tPg
-
 #-------short block here--------------------
-import pyshorteners
-from .models import URL
 # def short(request):
 #     return render(request, 'short.html')
 def shorten_url(url):
@@ -286,6 +248,13 @@ from django.views.generic import ListView
 from .models import Question
 
 def quiz(request):
+    questions = Question.objects.all()
+    context = {
+        'questions': questions
+    }
+    return render(request, 'quiz.html', context)
+
+def quiz_results(request):
     if request.method == 'POST':
         questions = Question.objects.all()
         total = len(questions)
@@ -302,13 +271,8 @@ def quiz(request):
             'percent': percent,
             'show_results': True
         }
-        return render(request, 'quiz.html', context)
-    else:
-        questions = Question.objects.all()
-        context = {
-            'questions': questions
-        }
-        return render(request, 'quiz.html', context)
+        return render(request, 'quiz_results.html', context)
+    raise PermissionDenied
 
 class QuestionListView(ListView):
     model = Question
@@ -316,52 +280,68 @@ class QuestionListView(ListView):
     context_object_name = 'questions'
 
 #----------------converter block herre------------------
-from .utils import convert_length, convert_speed, convert_temperature, convert_weight
+def currency_data():
+    """ All countries' currency data """
+    module_dir = os.path.dirname(__file__)  # get current directory
+    file_path = os.path.join(module_dir, 'currencies.json')
+    with open(file_path,'r', encoding='utf-8') as f:
+        currency_data = json.loads(f.read())
+    return currency_data
 
-def convert_length(request):
-    if request.method == 'POST':
-        value = float(request.POST.get('value'))
-        from_unit = request.POST.get('from_unit')
-        to_unit = request.POST.get('to_unit')
-        result = convert_length(value, from_unit, to_unit)
-        return render(request, 'converter.html', {'result': result})
-    return render(request, 'converter.html')
+def converter(request):
+    return render(request, "converter.html", {"currency_data": currency_data})
 
-def convert_speed(request):
-    if request.method == 'POST':
-        value = float(request.POST.get('value'))
-        from_unit = request.POST.get('from_unit')
-        to_unit = request.POST.get('to_unit')
-        result = convert_speed(value, from_unit, to_unit)
-        return render(request, 'converter.html', {'result': result})
-    return render(request, 'converter.html')
+def converter_results(request):
+    # Patikrina, ar užklausa yra POST tipo
+    if request.method == "POST":
 
-def convert_temperature(request):
-    if request.method == 'POST':
-        value = float(request.POST.get('value'))
-        from_unit = request.POST.get('from_unit')
-        to_unit = request.POST.get('to_unit')
-        result = convert_temperature(value, from_unit, to_unit)
-        return render(request, 'converter.html', {'result': result})
-    return render(request, 'converter.html')
+        # Gauna duomenis iš HTML formos
+        currency_from = request.POST.get("currency_from")
+        currency_to = request.POST.get("currency_to")
+        data = currency_data()
+        for row in data:
+            if currency_from == row['cc']:
+                country_from = row['country']
+            if currency_to == row['cc']:
+                country_to = row['country']
 
-def convert_weight(request):
-    if request.method == 'POST':
-        value = float(request.POST.get('value'))
-        from_unit = request.POST.get('from_unit')
-        to_unit = request.POST.get('to_unit')
-        result = convert_weight(value, from_unit, to_unit)
-        return render(request, 'converter.html', {'result': result})
-    return render(request, 'converter.html')
+        # Tikriname, ar įvestis yra validus skaičius
+        amount_str = request.POST.get('amount').replace(',', '.')
 
-def convert(request):
-    if request.method == 'POST':
-        value = float(request.POST.get('value'))
-        from_unit = request.POST.get('from_unit')
-        to_unit = request.POST.get('to_unit')
-        result = convert_length(value, from_unit, to_unit)
-        return render(request, 'converter.html', {'result': result})
-    return render(request, 'converter.html')
+        # Patikrinimas, ar įvestas tekstas yra tinkamas skaičius
+        if not re.match(r'^-?\d+(?:\.\d+)?$', amount_str):
+            return render(request, "converter.html",
+                          {"currency_data": currency_data(), "error_message": "Only numbers are allowed"})
+        try:
+            amount = float(amount_str)
+        except ValueError:
+            return render(request, "converter.html",
+                          {"currency_data": currency_data(), "error_message": "Invalid input"})
+        # Gauna valiutos keitimo kursus
+        url = f"https://open.er-api.com/v6/latest/{currency_from}"
+        d = requests.get(url).json()
+        # Atlieka konversiją
+        if d["result"] == "success":
+            # Gauti konversijos kursą norimai valiutai
+            ex_target = d["rates"][currency_to]
 
+            # Padauginti iš sumos, kad gauti konvertuotą rezultatą
+            result = ex_target * amount
 
+            # Nustato rezultatui 2 skaitmenis po kablelio
+            result = "{:.2f}".format(result)
 
+            context = {
+                "result": result,
+                "amount":amount,
+                "country_from":country_from,
+                "country_to":country_to,
+                "currency_from":currency_from,
+                "currency_to": currency_to,
+                "currency_data": currency_data(),
+            }
+            # Pateikia "converter_results.html" šabloną su rezultatu ir kitais duomenimis
+            return render(request, "converter_results.html", context)
+
+    # Jei užklausa nėra POST tipo, pateikti "converter.html" šabloną
+    return render(request, "converter.html", {"currency_data": currency_data})

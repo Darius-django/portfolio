@@ -1,80 +1,154 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Length Converter</title>
+<!doctype html>
+<html lang="en">
+  <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <style>
+ .col-sm-4:nth-child(odd) {
+    background-color: lightgray;
+  }
+  .col-sm-4:nth-child(even) {
+    background-color: lightblue;
+  }
         .center-form {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
-    </style>
-</head>
-<body>
-<div class="container center-form">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h1>Length Converter</h1>
-                <form method="post">
-                    {% csrf_token %}
-                    <label for="value">Value:</label>
-                    <input type="number" step="any" name="value" id="value" required><br><br>
-
-                    <label for="from_unit">From Unit:</label>
-                    <select name="from_unit" id="from_unit" required>
-                        <option value="mm">mm</option>
-                        <option value="cm">cm</option>
-                        <option value="m">m</option>
-                        <option value="km">km</option>
-                        <option value="in">in</option>
-                        <option value="ft">ft</option>
-                        <option value="yd">yd</option>
-                        <option value="mi">mi</option>
-                    </select><br><br>
-
-                    <label for="to_unit">To Unit:</label>
-                    <select name="to_unit" id="to_unit" required>
-                        <option value="mm">mm</option>
-                        <option value="cm">cm</option>
-                        <option value="m">m</option>
-                        <option value="km">km</option>
-                        <option value="in">in</option>
-                        <option value="ft">ft</option>
-                        <option value="yd">yd</option>
-                        <option value="mi">mi</option>
-                    </select><br><br>
-
-                    <input type="submit" value="Convert">
-                </form>
-                <div id="result"></div>
-            </div>
-        </div>
+        /*curency
+        <style>
+         *, *:before, *:after {
+         box-sizing: border-box;
+         }
+         html, body {
+         width: 100%;
+         height: 100%;
+         margin: 0;
+         padding: 0;
+         }
+         body {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         font: normal 10px 'Open Sans', sans-serif;
+         margin: 0;
+         -webkit-font-smoothing: antialiased;
+         color: #4c4c4c;
+         background: #3f44a5;
+         }
+         .clear {
+         clear: both;
+         }
+         h1 {
+         text-align: center;
+         font-size: 22px;
+         color: white;
+         }
+         .select-wrapper {
+         position: relative;
+         width: 350px;
+         }
+         .select-wrapper::after {
+         color: black;
+         content: '▾';
+         margin-right: 10px;
+         pointer-events: none;
+         position: absolute;
+         right: 10px;
+         top: 7px;
+         font-size: 20px;
+         }
+         .select {
+         -moz-appearance: none;
+         -webkit-appearance: none;
+         background: white;
+         border: none;
+         border-radius: 0;
+         cursor: pointer;
+         padding: 12px;
+         width: 100%;
+         font-size: 18px;
+         }
+         .select:focus {
+         color: black;
+         }
+         .select::-ms-expand {
+         display: none;
+         }
+         input{ width: 100%; height: 50px;}
+         h2 {color: #fff; text-align: center; font-size: 35px;}
+      </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  </head>
+  <body>
+<!---currency converter--->
+<div class="container">
+  <h1>Currency Converter</h1>
+  <form name="myForm" method="post" action="{% url 'converter_results' %}" class="needs-validation" onclick="myFunction()">
+    {% csrf_token %}
+    <!-- Amount input -->
+    <div class="form-group mb-3">
+      <input name="amount" id="numb" type="text" class="form-control" placeholder="Amount" required onkeyup="myFunction()">
+      <p id="demo"></p>
+    </div>
+    <div class="form-group mb-3">
+      <!-- From options -->
+      <select name="currency_from" class="form-control" required>
+        {% for c in currency_data %}
+        {% if c.cc == 'EUR' %}
+        <option value="{{c.cc}}" selected>{{c.name}}</option>
+        {% else %}
+        <option value="{{c.cc}}">{{c.name}}</option>
+        {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group mb-3">
+      <!-- To options -->
+      <select name="currency_to" class="form-control" required>
+        {% for c in currency_data %}
+        {% if c.cc == 'GBP' %}
+        <option value="{{c.cc}}" selected>{{c.name}}</option>
+        {% else %}
+        <option value="{{c.cc}}">{{c.name}}</option>
+        {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <input id="convert-button" type="submit" class="btn btn-primary" value="Convert">
+    </div>
+    {% if error_message %}
+    <p class="text-danger">{{ error_message }}</p>
+    {% endif %}
+  </form>
 </div>
-    <script>
-        document.querySelector("form").addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            var value = parseFloat(document.getElementById("value").value);
-            var from_unit = document.getElementById("from_unit").value;
-            var to_unit = document.getElementById("to_unit").value;
-
-            var formData = new FormData();
-            formData.append("value", value);
-            formData.append("from_unit", from_unit);
-            formData.append("to_unit", to_unit);
-
-            fetch("/convert", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.text())
-            .then(result => {
-                document.getElementById("result").innerHTML = result;
-            });
-        });
-    </script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-</body>
+         <!-- Currency list -->
+<!-- Currency list -->
+<div class="row mt-5">
+  <div class="col-sm-4">
+    <h3>Valiutos pavadinimas(en)</h3>
+    {% for c in currency_data %}
+    <p>{{ c.name }}</p>
+    {% endfor %}
+  </div>
+  <div class="col-sm-4">
+    <h3>Valiutos santrauka(en)</h3>
+    {% for c in currency_data %}
+    <p>{{ c.cc }}</p>
+    {% endfor %}
+  </div>
+  <div class="col-sm-4">
+    <h3>Valiutos šalis(en)</h3>
+    {% for c in currency_data %}
+    <p>{{ c.country }}</p>
+    {% endfor %}
+  </div>
+</div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
 </html>

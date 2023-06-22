@@ -66,4 +66,3 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
-from PORTFOLIO.models import Question
